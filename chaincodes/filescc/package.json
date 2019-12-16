@@ -1,0 +1,20 @@
+{
+    "name": "fabfile",
+    "version": "1.0.0",
+    "description": "FabFile contract implemented in JavaScript",
+    "main": "index.js",
+    "engines": {
+        "node": ">=8",
+        "npm": ">=5"
+    },
+    "scripts": {
+        "start": "fabric-chaincode-node start"
+    },
+    "engineStrict": true,
+    "author": "Herold Lercher Marolt",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "fabric-contract-api": "~1.4.0",
+        "fabric-shim": "~1.4.0"
+    }
+}
