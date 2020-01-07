@@ -20,14 +20,14 @@ class FabFile extends Contract {
     }
 
     async updateUserCredit(ctx, username, credit){
-        const user = await this.getUser(ctx, username);
+        const user = JSON.parse(await this.getUser(ctx, username));
         user.credit = credit;
 
         await ctx.stub.putState(this.getUserCompositeKey(ctx, username), Buffer.from(JSON.stringify(user)));
     }
 
     async updateUserTradingType(ctx, username, tradingType){
-        const user = await this.getUser(ctx, username);
+        const user = JSON.parse(await this.getUser(ctx, username));
         user.tradingType = tradingType;
 
         await ctx.stub.putState(this.getUserCompositeKey(ctx, username), Buffer.from(JSON.stringify(user)));
@@ -43,11 +43,23 @@ class FabFile extends Contract {
             return bUser.toString();
     }
 
+    async putUser(ctx, user){
+        await ctx.stub.putState(this.getUserCompositeKey(ctx, user.username), Buffer.from(JSON.stringify(user)));
+    }
+
     // Contracts to register products and availability for sellers
-    async registerFile(ctx, filename, type, price, available) {
+    async registerFile(ctx, filename, owner, type, price, available) {
+        try{
+            const user = await this.getUser(ctx, owner);
+        }
+        catch(error){
+            throw new Error(`Owner ${owner} does not exist`);
+        }
+
         const file = {
             docType: "file",
             filename,
+            owner,
             type,
             price,
             available
@@ -57,14 +69,14 @@ class FabFile extends Contract {
     }
 
     async updateFileAvailability(ctx, filename, available) {
-        const file = await this.getFile(ctx, filename);
+        const file = JSON.parse(await this.getFile(ctx, filename));
         file.available = available;
 
         await ctx.stub.putState(this.getFileCompositeKey(ctx, filename), Buffer.from(JSON.stringify(file)));
     }
 
     async updateFilePrice(ctx, filename, price) {
-        const file = await this.getFile(ctx, filename);
+        const file = JSON.parse(await this.getFile(ctx, filename));
         file.price = price;
 
         await ctx.stub.putState(this.getFileCompositeKey(ctx, filename), Buffer.from(JSON.stringify(file)));
@@ -81,8 +93,28 @@ class FabFile extends Contract {
     }
 
     // Methods for buyers to purchase products
-    async buyFile(ctx, filename, buyer){
-        
+    async buyFile(ctx, filename, buyername){
+        const file = JSON.parse(await this.getFile(ctx, filename));
+
+        if(!file.available)
+            throw new Error(`${filename} is not available`);
+
+        const file_owner = JSON.parse(await this.getUser(ctx, file.owner));
+        const file_buyer = JSON.parse(await this.getUser(ctx, buyername));
+
+        const file_price = parseFloat(file.price);
+        const buyer_credit = parseFloat(file_buyer.credit);
+        const seller_credit = parseFloat(file_owner.credit);
+
+        if(buyer_credit < file_price)  
+            throw new Error(`${buyername} has not sufficient funds (${buyer_credit} but needs ${file_price})`);
+
+        // buyer can buy
+        file_buyer.credit = buyer_credit - file_price;
+        file_owner.credit = seller_credit + file_price;
+
+        this.putUser(ctx, file_owner);
+        this.putUser(ctx, file_buyer);
     }
 
     // Use your imagination
