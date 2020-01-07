@@ -47,8 +47,12 @@ class FabFile extends Contract {
         await ctx.stub.putState(this.getUserCompositeKey(ctx, user.username), Buffer.from(JSON.stringify(user)));
     }
 
+    async getAllUsers(ctx){
+        return await this.getAllData(ctx, this.getUserKeyPrefix());
+    }
+
     // Contracts to register products and availability for sellers
-    async registerFile(ctx, filename, owner, type, price, available) {
+    async registerFile(ctx, filename, owner, type, price, available, hash) {
         try{
             const user = await this.getUser(ctx, owner);
         }
@@ -62,7 +66,8 @@ class FabFile extends Contract {
             owner,
             type,
             price,
-            available
+            available,
+            hash
         };
 
         await ctx.stub.putState(this.getFileCompositeKey(ctx, filename), Buffer.from(JSON.stringify(file)));
@@ -92,11 +97,15 @@ class FabFile extends Contract {
             return bFile.toString();
     }
 
+    async getAllFiles(ctx){
+        return await this.getAllData(ctx, this.getFileKeyPrefix());
+    }
+
     // Methods for buyers to purchase products
     async buyFile(ctx, filename, buyername){
         const file = JSON.parse(await this.getFile(ctx, filename));
 
-        if(!file.available)
+        if((file.available == 0))
             throw new Error(`${filename} is not available`);
 
         const file_owner = JSON.parse(await this.getUser(ctx, file.owner));
@@ -113,8 +122,8 @@ class FabFile extends Contract {
         file_buyer.credit = buyer_credit - file_price;
         file_owner.credit = seller_credit + file_price;
 
-        this.putUser(ctx, file_owner);
         this.putUser(ctx, file_buyer);
+        this.putUser(ctx, file_owner);
     }
 
     // Use your imagination
@@ -134,6 +143,33 @@ class FabFile extends Contract {
 
     getUserKeyPrefix() {
         return "USER_";
+    }
+
+    async getAllData(ctx, keyPrefix) {
+        const iterator = await ctx.stub.getStateByPartialCompositeKey(keyPrefix, []);
+
+        const allResults = [];
+        while (true) {
+            const res = await iterator.next();
+
+            if (res.value && res.value.value.toString()) {
+                console.log(res.value.value.toString('utf8'));
+
+                const Key = res.value.key;
+                let Record;
+                try {
+                    Record = JSON.parse(res.value.value.toString('utf8'));
+                } catch (err) {
+                    console.log(err);
+                    Record = res.value.value.toString('utf8');
+                }
+                allResults.push({ Key, Record });
+            }
+            if (res.done) {
+                await iterator.close();
+                return JSON.stringify(allResults);
+            }
+        }
     }
 }
 
