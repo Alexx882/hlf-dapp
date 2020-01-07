@@ -3,6 +3,7 @@
 const { Contract } = require('fabric-contract-api');
 const FabUser = require('./fabuser');
 const Helper = require('./helper');
+const FabSale = require('./fabsale');
 
 class FabFile extends Contract {
 
@@ -77,8 +78,10 @@ class FabFile extends Contract {
         file_buyer.credit = buyer_credit - file_price;
         file_owner.credit = seller_credit + file_price;
 
-        new FabUser().putUser(ctx, file_buyer);
-        new FabUser().putUser(ctx, file_owner);
+        await new FabSale().addSale(ctx, filename, buyername, file_price);
+
+        await new FabUser().putUser(ctx, file_buyer);
+        await new FabUser().putUser(ctx, file_owner);
     }
 
     getFileKeyPrefix() {
