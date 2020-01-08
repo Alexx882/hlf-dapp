@@ -3,7 +3,7 @@ version: '2'
 services:
   orderer:
     container_name: orderer
-    image: hyperledger/fabric-orderer:1.2.0
+    image: hyperledger/fabric-orderer
     environment:
       - FABRIC_LOGGING_SPEC=debug
       - ORDERER_GENERAL_LISTENADDRESS=orderer
@@ -25,7 +25,7 @@ services:
 
   peer:
     container_name: peer
-    image: hyperledger/fabric-peer:1.2.0
+    image: hyperledger/fabric-peer
     environment:
       - CORE_PEER_ID=peer
       - CORE_PEER_ADDRESS=peer:7051
@@ -62,7 +62,7 @@ services:
 
   couchdb:
     container_name: couchdb
-    image: hyperledger/fabric-couchdb:0.4.14
+    image: hyperledger/fabric-couchdb
     # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
     # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
     environment:
@@ -77,7 +77,7 @@ services:
   # Therefore, it is better to down the complete network and restart it (docker-compose down)
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools:1.2.0
+    image: hyperledger/fabric-tools
     tty: true
     environment:
       - GOPATH=/opt/gopath
