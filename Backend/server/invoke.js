@@ -31,11 +31,14 @@ async function main() {
       console.log('#### connected to gw');
         
       // Get the network (channel) our contract is deployed to.
-      const network = await gateway.getNetwork('myc');
+      const network = await gateway.getNetwork('mychannel');
   
   
       console.log("#### await gateway.getNetwork()");
       // Get the contract from the network.
+
+      
+
       const contract = network.getContract('fabfile');
   
   

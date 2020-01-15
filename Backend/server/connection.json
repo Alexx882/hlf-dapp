@@ -1,5 +1,5 @@
 {
-    "name": "simplehlfnet",
+    "name": "basic-network",
     "version": "1.0.0",
     "client": {
         "organization": "Org1",
@@ -13,7 +13,7 @@
         }
     },
     "channels": {
-        "myc": {
+        "mychannel": {
             "orderers": [
                 "orderer.example.com"
             ],
