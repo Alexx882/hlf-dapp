@@ -8,21 +8,15 @@ import re
 import os
 from werkzeug.utils import secure_filename
 from offer_manager import OfferManager
-
+from user_manager import UserManager
 
 @login.user_loader
 def load_user(id):
-    for user in users:
+    for user in userManager.users:
         if user.id == id:
             return user
+
     return None
-
-
-users = [
-    User(1, "Dirty Jules", "email@email.com", "p1", 900),
-    User(2, "ChickPro Wolfi", "email2@email.com", "p2", 900),
-    User(3, "Herry", "herrytco@gmail.com", "hallihallo", 420)
-]
 
 colorMapping = {
     "video": "primary",
@@ -47,6 +41,11 @@ offerManager = OfferManager(
     )
 )
 
+userManager = UserManager(
+    os.path.join(
+        app.instance_path, 'users.json'
+    )
+)
 
 @app.route('/')
 @app.route('/index')
@@ -128,7 +127,7 @@ def login():
         username = form.username.data
         password = form.password.data
 
-        for user in users:
+        for user in userManager.users:
             if user.email == username and user.checkPassword(password):
                 login_user(user, remember=True)
                 return redirect(url_for('index'))
@@ -224,16 +223,13 @@ def search():
                 offersShown.append(offer)
 
         usersMap = {}
-        for user in users:
+        for user in userManager.users:
             usersMap[user.id] = user.name
 
         if current_user.id in offerManager.buys:
             buys = offerManager.buys[current_user.id]
         else:
             buys = []
-        
-        print("aöslkdfjölsdkfj")
-        print("buys: %s" % (str(buys)))
 
         return render_template(
             'shop.html',
@@ -255,7 +251,7 @@ def shop():
         return redirect(url_for('index'))
 
     usersMap = {}
-    for user in users:
+    for user in userManager.users:
         usersMap[user.id] = user.name
 
     form = SearchForm()
@@ -264,6 +260,8 @@ def shop():
         buys = offerManager.buys[current_user.id]
     else:
         buys = []
+
+    userManager.writeToFile()
 
     return render_template(
         'shop.html',

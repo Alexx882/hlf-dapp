@@ -16,7 +16,7 @@ class User(UserMixin):
          return self.id
 
     def toDictionary(self):
-        return {'id': self.id, 'name': self.name}
+        return {'id': self.id, 'name': self.name, 'email': self.email, 'password': self.password}
 
     def checkPassword(self, password):
         return self.password == password
