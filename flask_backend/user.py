@@ -1,16 +1,16 @@
 from flask_login import UserMixin
 
-
 class User(UserMixin):
     is_authenticated = True
     is_active = True
     is_anonymous = False
 
-    def __init__(self, id, name, email, password):
+    def __init__(self, id, name, email, password, balance):
         self.id = id
         self.name = name
         self.email = email
         self.password = password
+        self.balance = balance
 
     def get_id(self):
          return self.id

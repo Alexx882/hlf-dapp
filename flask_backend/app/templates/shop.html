@@ -156,7 +156,7 @@
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
                   role="button" data-toggle="dropdown" aria-haspopup="true"
                   aria-expanded="false">
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{username}}</span>
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{username}}<br>{{ balance }} HyperCoinz</span>
                   <img class="img-profile rounded-circle"
                     src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
                 </a>
@@ -181,26 +181,39 @@
             <!-- Offers Heading -->
             <div class="d-sm-flex align-items-center justify-content-between
               mb-4">
-              <h1 class="h3 mb-0 text-gray-800">Offers <sup><a href="add"><i class="fas fa-plus"></i></a></sup></h1>
+              <h1 class="h3 mb-0 text-gray-800">Offers <sup><a href="add"><i
+                      class="fas fa-plus"></i></a></sup></h1>
             </div>
 
             <!-- Content Row -->
             <div class="row">
               <!-- offers -->
               {% for offer in offersShown %}
+
               <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-{{colorMapping[offer.type]}} shadow
+                <div class="card border-left-{{colorMapping[offer.type]}}
+                  shadow
                   h-100 py-2">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary
-                          text-uppercase mb-1">{{offer.filename}}</div>
+                          text-uppercase mb-1">
+                          <a href="offer/{{ offer.filename }}">
+                            {{offer.filename}}
+                          </a>
+                        </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">${{offer.price}}</div>
                         <div class="text-xs text-uppercase">sold by <b>{{users[offer.offererId]}}</b></div>
+
+                        {% if offer.filename in buys %}
+                        <div class="text-xs text-uppercase"><b>bought</b></div>
+                        {% endif %}
+
                       </div>
                       <div class="col-auto">
-                        <i class="fas fa-file-{{iconMapping[offer.type]}} fa-2x
+                        <i class="fas fa-file-{{iconMapping[offer.type]}}
+                          fa-2x
                           text-gray-300"></i>
                       </div>
                     </div>
