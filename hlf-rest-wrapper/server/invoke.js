@@ -28,26 +28,29 @@ async function main() {
       const gateway = new Gateway();
       await gateway.connect(ccpPath, { wallet, identity: 'filecc-user', discovery: { enabled: false } });
   
-      console.log('#### connected to gw');
         
       // Get the network (channel) our contract is deployed to.
       const network = await gateway.getNetwork('mychannel');
-  
-  
-      console.log("#### await gateway.getNetwork()");
-      // Get the contract from the network.
-
-
-
       const contract = network.getContract('fabfile');
   
+
+
+
   
-      // Evaluate the specified transaction.
-      // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
-      // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
       const result = await contract.evaluateTransaction('FabUser:getAllUsers');
       console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+
+      // peer chaincode invoke -C mychannel -n fabfile -c '{"Args":["FabUser:registerUser","Alex","10","Buyer","1"]}'
+      await contract.submitTransaction('FabUser:registerUser', 'Alex', '10', '1'); 
+      console.log('Transaction has been submitted');
+
+      const result2 = await contract.evaluateTransaction('FabUser:getAllUsers');
+      console.log(`Transaction has been evaluated, result is: ${result2.toString()}`);
       
+
+
+
+
       await gateway.disconnect();
       
     } catch (error) {
