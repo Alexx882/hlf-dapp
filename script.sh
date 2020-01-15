@@ -2,6 +2,10 @@
 # Copyright London Stock Exchange Group All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+
+# we wait 30 seconds - after that the peer should be running
+sleep 30
+
 set -e
 # This script expedites the chaincode development process by automating the
 # requisite channel create/join commands
