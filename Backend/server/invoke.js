@@ -16,9 +16,9 @@ async function main() {
       console.log(`Wallet path: ${walletPath}`);
   
       // Check to see if we've already enrolled the user.
-      const userExists = await wallet.exists('user3');
+      const userExists = await wallet.exists('filecc-user');
       if (!userExists) {
-          console.log('An identity for the user "user3" does not exist in the wallet');
+          console.log('An identity for the user "filecc-user" does not exist in the wallet');
           console.log('Run the registerUser.js application before retrying');
           return;
       }
@@ -26,7 +26,7 @@ async function main() {
   
       // Create a new gateway for connecting to our peer node.
       const gateway = new Gateway();
-      await gateway.connect(ccpPath, { wallet, identity: 'user3', discovery: { enabled: false } });
+      await gateway.connect(ccpPath, { wallet, identity: 'filecc-user', discovery: { enabled: false } });
   
       console.log('#### connected to gw');
         
@@ -37,7 +37,7 @@ async function main() {
       console.log("#### await gateway.getNetwork()");
       // Get the contract from the network.
 
-      
+
 
       const contract = network.getContract('fabfile');
   
@@ -45,7 +45,7 @@ async function main() {
       // Evaluate the specified transaction.
       // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
       // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
-      const result = await contract.evaluateTransactsysion('getAllUsers');
+      const result = await contract.evaluateTransaction('FabUser:getAllUsers');
       console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
       
       await gateway.disconnect();
