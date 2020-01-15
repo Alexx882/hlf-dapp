@@ -8,6 +8,7 @@ services:
       - "7054:7054"
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.example.com
     volumes:
       - "./fabric-ca-server:/etc/hyperledger/fabric-ca-server"
     command: sh -c 'fabric-ca-server start -b admin:adminpw'
@@ -102,7 +103,7 @@ services:
       - CORE_PEER_LOCALMSPID=DEFAULT
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
     working_dir: /opt/gopath/src/chaincodedev
-    command: /bin/bash -c './script.sh'
+    #command: /bin/bash -c './script.sh'
     volumes:
       - /var/run/:/host/var/run/
       - ./msp:/etc/hyperledger/msp      
