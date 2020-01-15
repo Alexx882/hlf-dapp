@@ -11,7 +11,7 @@ class LoginForm(FlaskForm):
             "type": "email",
             "id": "exampleInputEmail",
             "aria-describedby": "emailHelp",
-            "placeholder": "Enter Email Address..."
+            "placeholder": "Email Address"
         }
     )
     password = PasswordField(
