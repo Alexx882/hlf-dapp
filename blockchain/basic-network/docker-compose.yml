@@ -118,8 +118,34 @@ services:
         - ./../../chaincodes/:/opt/gopath/src/github.com/chaincodes/ # location of chaincode
         - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
     networks:
-        - basic
-    #depends_on:
-    #  - orderer.example.com
-    #  - peer0.org1.example.com
-    #  - couchdb
+      - basic
+    depends_on:
+     - orderer.example.com
+     - peer0.org1.example.com
+     - couchdb
+
+  hlf-rest-wrapper:
+    container_name: hlf-wrapper
+    image: hlf-rest-wrapper
+    ports:
+      - 3033:3033
+    networks: 
+      - basic
+    depends_on:
+      - orderer.example.com
+      - peer0.org1.example.com
+      - couchdb
+      - ca.example.com
+      - cli
+      
+  filestore:
+    container_name: filestore
+    image: filestore
+    ports:
+      - 5000:5000
+    environment:
+      - WRAPPER_ENDPOINT=http://hlf-rest-wrapper:3033/api/
+    networks: 
+      - basic
+    depends_on:
+      - hlf-rest-wrapper
