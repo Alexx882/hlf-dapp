@@ -11,6 +11,7 @@ from offer_manager import OfferManager
 from user_manager import UserManager
 import requests
 import json
+import hashlib
 
 
 @login.user_loader
@@ -86,8 +87,8 @@ def signUp():
             userManager.writeToFile()
 
             # register user at back-backend
-            #requests.post("%s/users/registerUser" % (url), data = {"username":userNew.email, "credit":"1000", "tradingType":"Buyer", "admin":"0"})
-    
+            # requests.post("%s/users/registerUser" % (url), data = {"username":userNew.email, "credit":"1000", "tradingType":"Buyer", "admin":"0"})
+
     return redirect(url_for('index'))
 
 
@@ -132,6 +133,10 @@ def buy(filename):
         offerManager.buys[current_user.id].append(filename)
         offerManager.writeToFile()
 
+        # update balance in backend
+        #requests.patch("%s/users/updateUserCredit",
+        #               payload={"username": current_user.email, "credit": current_user.balance})
+
         return render_template(
             "success-download.html",
             filename=filename
@@ -173,13 +178,15 @@ def login():
 
         for user in userManager.users:
             if user.email == username and user.checkPassword(password):
-                login_user(user, remember=True)
 
-                #data = requests.post("%s/users/getUser" % (login_user.email), payload = {"username":login_user.email})
+                # data = requests.post("%s/users/getUser" % (login_user.email), payload = {"username":login_user.email})
                 data = '{"admin":"1","credit":"100","docType":"user","tradingType":"Buyer","username":"herrytco@gmail.com"}'
                 obj = json.loads(data)
 
-                login_user.balance = obj["credit"]
+                print("server credit: ", obj["credit"])
+                user.balance = obj["credit"]
+
+                login_user(user, remember=True)
                 userManager.writeToFile()
 
                 return redirect(url_for('index'))
@@ -241,6 +248,9 @@ def upload():
 
         offerManager.offers.append(offer)
         offerManager.writeToFile()
+
+        # register offer online
+        
 
         return redirect(url_for('success'))
     else:
