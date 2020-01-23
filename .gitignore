@@ -9,5 +9,6 @@ myc.block
 # user files of the store for debugging
 flask_backend/instance/*
 !flask_backend/instance/.gitkeep
+!flask_backend/instance/_user_files
 flask_backend/instance/_user_files/*
 !flask_backend/instance/_user_files/.gitkeep
