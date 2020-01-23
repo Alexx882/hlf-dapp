@@ -26,8 +26,9 @@ docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/g
 
 # Now we build and launch the node.js wrapper and the webstore
 docker build -t filestore ../../flask_backend/
+docker build -t hlf-rest-wrapper ../../hlf-rest-wrapper/
 
-docker-compose -f ./docker-compose.yml up -d filestore # hlf-rest-wrapper 
+docker-compose -f ./docker-compose.yml up -d hlf-rest-wrapper filestore
 
 exit 0
 
