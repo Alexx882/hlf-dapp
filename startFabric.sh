@@ -1,9 +1,12 @@
 #!/bin/bash
-#
-# Copyright IBM Corp All Rights Reserved
-#
-# SPDX-License-Identifier: Apache-2.0
-#
+
+### DOCU ###
+# The whole network will run with docker-compose as the provided architecture
+# maps the same folders to multiple containers (crypto-config folder).
+# We added our services (the wrapper and the webservice) to the existing docker-compose 
+# and start them after the hlf network is running.
+############
+
 # Exit on first error
 set -e
 
