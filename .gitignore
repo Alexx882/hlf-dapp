@@ -1,4 +1,5 @@
 __MACOSX
 myc.block
+**/node_modules/
 
 Backend/server/node_modules
