@@ -15,5 +15,6 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+ENV PORT 3033
 EXPOSE 3033
-CMD [ "npm", "start"]
+CMD [ "npm", "run","start"]
