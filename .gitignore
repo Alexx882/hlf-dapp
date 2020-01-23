@@ -1,7 +1,10 @@
 __MACOSX
+**/.DS_Store
 myc.block
 **/node_modules/
 **/__pycache__/
 **/venv/
+**/.vscode/
 
-Backend/server/node_modules
+# user files of the store for debugging
+flask_backend/instance
