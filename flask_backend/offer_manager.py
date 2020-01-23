@@ -1,12 +1,23 @@
 from offer import Offer
 import json
+import os
+
 
 class OfferManager:
     def __init__(self, documentPath, buysPath):
-        self.documentPath=documentPath
+        self.documentPath = documentPath
         self.buysPath = buysPath
         self.offers = []
         self.buys = {}
+
+        if not os.path.isfile(self.documentPath):
+            with open(self.documentPath, "w+") as fo:
+                fo.write('{"offers":[]}')
+
+        if not os.path.isfile(self.buysPath):
+            f = open(self.buysPath, "w+")
+            f.write('{}')
+            f.close()
 
         dataFile = open(self.documentPath, "r")
         data = dataFile.read()
@@ -23,7 +34,7 @@ class OfferManager:
                 )
 
                 self.offers.append(offer)
-        
+
         buysFile = open(self.buysPath, "r")
         data = buysFile.read()
         buysFile.close()
@@ -37,13 +48,14 @@ class OfferManager:
             for singleBuy in buysList:
                 self.buys[bId].append(singleBuy)
 
-        print("registered offersmanager at %s with %s stored offers" % (self.documentPath, str(len(self.offers))))
-    
+        print("registered offersmanager at %s with %s stored offers" %
+              (self.documentPath, str(len(self.offers))))
+
     def getOfferForFilename(self, filename):
         for offer in self.offers:
             if offer.filename == filename:
                 return offer
-            
+
         return None
 
     def removeFile(self, filename):
@@ -59,7 +71,7 @@ class OfferManager:
 
     def writeToFile(self):
         dataFile = open(self.documentPath, "w")
-        data = {"offers":[offer.toDictionary() for offer in self.offers]}
+        data = {"offers": [offer.toDictionary() for offer in self.offers]}
         dataFile.write(json.dumps(data))
         dataFile.close()
 

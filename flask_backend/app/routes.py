@@ -22,8 +22,10 @@ def load_user(id):
 
     return None
 
-
-url = os.environ['WRAPPER_ENDPOINT']
+try:
+    url = os.environ['WRAPPER_ENDPOINT']
+except:
+    url = "undefined"
 
 colorMapping = {
     "video": "primary",

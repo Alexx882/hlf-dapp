@@ -1,10 +1,17 @@
+import os
 import json
 from user import User
+
 
 class UserManager:
     def __init__(self, userPath):
         self.users = []
         self.userPath = userPath
+
+        if not os.path.isfile(self.userPath):
+            f= open(self.userPath,"w+")
+            f.write("[]")
+            f.close()
 
         dataFile = open(self.userPath, "r")
         data = dataFile.read()
@@ -21,7 +28,7 @@ class UserManager:
                         0
                     )
                 )
-    
+
     def writeToFile(self):
         dataFile = open(self.userPath, "w")
         data = [user.toDictionary() for user in self.users]
