@@ -78,7 +78,7 @@ class FabFile extends Contract {
         file_buyer.credit = buyer_credit - file_price;
         file_owner.credit = seller_credit + file_price;
 
-        await new FabSale().addSale(ctx, filename, buyername, file_price);
+        await new FabSale().addSale(ctx, filename, file.hash, buyername, file_price);
 
         await new FabUser().putUser(ctx, file_buyer);
         await new FabUser().putUser(ctx, file_owner);

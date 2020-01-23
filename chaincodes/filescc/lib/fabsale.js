@@ -5,10 +5,11 @@ const Helper = require('./helper');
 
 class FabSale extends Contract {
 
-    async addSale(ctx, filename, buyername, price){
+    async addSale(ctx, filename, hash, buyername, price){
         const sale = {
             docType: 'sale',
             filename,
+            hash,
             buyername,
             price,
             timestamp: Date.now()
