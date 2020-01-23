@@ -8,10 +8,10 @@
 set -e
 
 # clean the keystore
-rm -rf ./hfc-key-store
+rm -rf ./blockchain/hfc-key-store
 
 # launch network; create channel and join peer to channel
-cd basic-network
+cd blockchain/basic-network
 ./start.sh
 
 # Now launch the CLI container in order to install, instantiate chaincode
@@ -20,6 +20,9 @@ docker-compose -f ./docker-compose.yml up -d cli
 
 docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp" cli peer chaincode install -n fabfile -v 1.0 -p /opt/gopath/src/github.com/chaincodes/filescc -l node
 docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp" cli peer chaincode instantiate -o orderer.example.com:7050 -C mychannel -n fabfile -l node -v 1.0 -c '{"Args":[]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
+
+# Now we launch the node.js wrapper and the webstore
+# docker-compose -f ./docker-compose.yml up -d hlf-rest-wrapper filestore
 
 exit 0
 
