@@ -1,6 +1,6 @@
 from flask import render_template, send_from_directory, redirect, url_for, send_file
 from app import app, login
-from app.forms import SearchForm, UploadForm, LoginForm
+from app.forms import SearchForm, UploadForm, LoginForm, RegisterForm
 from flask_login import current_user, login_user, logout_user
 from offer import Offer
 from user import User
@@ -9,6 +9,9 @@ import os
 from werkzeug.utils import secure_filename
 from offer_manager import OfferManager
 from user_manager import UserManager
+import requests
+import json
+
 
 @login.user_loader
 def load_user(id):
@@ -17,6 +20,9 @@ def load_user(id):
             return user
 
     return None
+
+
+url = "http://someUrl.com:80"
 
 colorMapping = {
     "video": "primary",
@@ -47,6 +53,7 @@ userManager = UserManager(
     )
 )
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -57,6 +64,43 @@ def index():
         'index.html',
         form=LoginForm()
     )
+
+
+@app.route("/registerAction", methods=['POST'])
+def signUp():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        password = form.password.data
+
+        userNew = User(None, name, email, password, 0)
+
+        duplicate = False
+        for user in userManager.users:
+            if user.email == userNew.email:
+                duplicate = True
+
+        if not duplicate:
+            userManager.users.append(userNew)
+            userManager.writeToFile()
+
+            # register user at back-backend
+            #requests.post("%s/users/registerUser" % (url), data = {"username":userNew.email, "credit":"1000", "tradingType":"Buyer", "admin":"0"})
+    
+    return redirect(url_for('index'))
+
+
+@app.route("/register")
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('shop'))
+
+    return render_template(
+        "register.html",
+        form=RegisterForm()
+    )
+
 
 @app.route('/download/<filename>')
 def download(filename):
@@ -130,6 +174,14 @@ def login():
         for user in userManager.users:
             if user.email == username and user.checkPassword(password):
                 login_user(user, remember=True)
+
+                #data = requests.post("%s/users/getUser" % (login_user.email), payload = {"username":login_user.email})
+                data = '{"admin":"1","credit":"100","docType":"user","tradingType":"Buyer","username":"herrytco@gmail.com"}'
+                obj = json.loads(data)
+
+                login_user.balance = obj["credit"]
+                userManager.writeToFile()
+
                 return redirect(url_for('index'))
 
         return "success %s/%s" % (username, password)

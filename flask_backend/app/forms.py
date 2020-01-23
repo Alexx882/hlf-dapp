@@ -3,6 +3,47 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField
 from wtforms.validators import DataRequired
 
+class RegisterForm(FlaskForm):
+    name = StringField(
+        'Username', 
+        validators=[DataRequired()],
+        render_kw={
+            "placeholder": "Enter Your Name",
+            "id": "exampleFirstName",
+            "type": "text"
+        }
+    )
+
+    email = StringField(
+        'E-Mail-Address', 
+        validators=[DataRequired()],
+        render_kw={
+            "placeholder": "Enter Your E-Mail Address",
+            "id": "exampleInputEmail",
+            "type": "email"
+        }
+    )
+
+    password = PasswordField(
+        'Password', 
+        validators=[DataRequired()],
+        render_kw={
+            "placeholder": "Password",
+            "id": "exampleInputPassword",
+            "type": "password"
+        }
+    )
+
+    password2 = PasswordField(
+        'repeat Password', 
+        validators=[DataRequired()],
+        render_kw={
+            "placeholder": "Repeat Password",
+            "id": "exampleRepeatPassword",
+            "type": "password"
+        }
+    )
+
 class LoginForm(FlaskForm):
     username = StringField(
         'Username', 

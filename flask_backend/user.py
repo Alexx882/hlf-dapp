@@ -4,9 +4,12 @@ class User(UserMixin):
     is_authenticated = True
     is_active = True
     is_anonymous = False
+    nextId = 1
 
     def __init__(self, id, name, email, password, balance):
-        self.id = id
+        self.id = User.nextId
+        User.nextId += 1
+
         self.name = name
         self.email = email
         self.password = password
@@ -16,7 +19,7 @@ class User(UserMixin):
          return self.id
 
     def toDictionary(self):
-        return {'id': self.id, 'name': self.name, 'email': self.email, 'password': self.password}
+        return {'id': self.id, 'name': self.name, 'email': self.email, 'password': self.password, 'balance': self.balance}
 
     def checkPassword(self, password):
         return self.password == password
