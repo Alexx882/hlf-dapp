@@ -1,5 +1,7 @@
 __MACOSX
 myc.block
 **/node_modules/
+**/__pycache__/
+**/venv/
 
 Backend/server/node_modules
