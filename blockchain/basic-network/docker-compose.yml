@@ -138,14 +138,14 @@ services:
   #     - ca.example.com
   #     - cli
       
-  # filestore:
-  #   container_name: filestore
-  #   image: filestore
-  #   ports:
-  #     - 5000:5000
-  #   environment:
-  #     - WRAPPER_ENDPOINT=http://hlf-rest-wrapper:3033/api/
-  #   networks: 
-  #     - basic
+  filestore:
+    container_name: filestore
+    image: filestore:latest
+    ports:
+      - 5000:5000
+    environment:
+      - WRAPPER_ENDPOINT=http://hlf-rest-wrapper:3033/api/
+    networks: 
+      - basic
   #   depends_on:
   #     - hlf-rest-wrapper
