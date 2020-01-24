@@ -155,7 +155,8 @@ def buy(filename):
                 "success-download.html",
                 filename=filename
             )
-        except:
+        except Exception as e:
+            print(e);
             return "File Could not be purchased."
 
     return redirect(url_for('index'))
