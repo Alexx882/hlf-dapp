@@ -134,22 +134,28 @@ def buy(filename):
 
         if current_user.id not in offerManager.buys:
             offerManager.buys[current_user.id] = []
+
         offerManager.buys[current_user.id].append(filename)
         offerManager.writeToFile()
 
-        # update balance in backend
-        requests.patch("%s/users/updateUserCredit", payload={"username": current_user.email, "credit": current_user.balance})
+        try:
+            # tell the server that the file was bought
+            requests.post("%s/file/buyFile" % (url),
+                        data={"filename": filename, "buyername": current_user.email})
+            
+            # update balance in backend
+            requests.patch("%s/users/updateUserCredit",
+                        payload={"username": current_user.email, "credit": current_user.balance})
 
-        # tell the server that the file was bought
-        requests.post("%s/file/buyFile" % (url), 
-        data={"filename": filename, "buyername": current_user.email})
-
-        return render_template(
-            "success-download.html",
-            filename=filename
-        )
-
+            return render_template(
+                "success-download.html",
+                filename=filename
+            )
+        except:
+            return "File Could not be purchased."
+            
     return redirect(url_for('index'))
+
 
 @app.route('/offer/<filename>')
 def offer(filename):
@@ -184,7 +190,8 @@ def login():
 
         for user in userManager.users:
             if user.email == username and user.checkPassword(password):
-                data = requests.post("%s/users/getUser" % (url), payload = {"username":user.email})
+                data = requests.post("%s/users/getUser" %
+                                     (url), payload={"username": user.email})
                 # data = '{"admin":"1","credit":"100","docType":"user","tradingType":"Buyer","username":"herrytco@gmail.com"}'
                 obj = json.loads(data)
 
@@ -259,7 +266,8 @@ def upload():
             bytes = f.read()  # read entire file as bytes
             readable_hash = hashlib.sha256(bytes).hexdigest()
 
-        requests.post("%s/file/registerFile" % (url), payload={"filename":filename, "owner":current_user.email, "type":"filetype", "price":form.price.data, "available":"1", "hash":readable_hash})
+        requests.post("%s/file/registerFile" % (url), payload={"filename": filename, "owner": current_user.email,
+                                                               "type": "filetype", "price": form.price.data, "available": "1", "hash": readable_hash})
 
         return redirect(url_for('success'))
     else:
