@@ -309,7 +309,7 @@ def enable(filename):
                 avString = "1"
 
             if url != "undefined":
-                requests.patch("%s/file/updateFileAvailability", data = {"filename":filename, "available": avString})
+                requests.patch("%s/file/updateFileAvailability" % (url), data = {"filename":filename, "available": avString})
             break
     
     offerManager.writeToFile()
@@ -331,7 +331,7 @@ def disable(filename):
                 avString = "1"
 
             if url != "undefined":
-                requests.patch("%s/file/updateFileAvailability", data = {"filename":filename, "available": avString})
+                requests.patch("%s/file/updateFileAvailability" % (url), data = {"filename":filename, "available": avString})
             break
     
     offerManager.writeToFile()
