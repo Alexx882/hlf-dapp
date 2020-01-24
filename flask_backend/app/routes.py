@@ -25,7 +25,7 @@ def load_user(id):
 try:
     url = os.environ['WRAPPER_ENDPOINT']
 except:
-    url = "undefined"
+    url = "http://test.nope-api.systems:3033/api"
 
 colorMapping = {
     "video": "primary",
@@ -197,8 +197,9 @@ def login():
                 except:
                     return data.text
 
+                print(obj)
                 print("server credit: ", obj["credit"])
-                user.balance = obj["credit"]
+                user.balance = int(obj["credit"])
 
                 login_user(user, remember=True)
                 userManager.writeToFile()
