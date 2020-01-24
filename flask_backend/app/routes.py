@@ -189,7 +189,7 @@ def login():
 
         for user in userManager.users:
             if user.email == username and user.checkPassword(password):
-                data = requests.post("%s/users/getUser" %
+                data = requests.get("%s/users/getUser" %
                                      (url), data={"username": user.email})
 
                 try:
