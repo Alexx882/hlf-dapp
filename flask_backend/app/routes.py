@@ -372,7 +372,7 @@ def search():
         return render_template(
             'shop.html',
             username='Herry',
-            offersShown=[offer.toDictionary() for offer in offersShown],
+            offersShown=offersShown,
             colorMapping=colorMapping,
             iconMapping=iconMapping,
             users=usersMap,
