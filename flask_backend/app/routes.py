@@ -191,9 +191,11 @@ def login():
             if user.email == username and user.checkPassword(password):
                 data = requests.post("%s/users/getUser" %
                                      (url), data={"username": user.email})
-                # data = '{"admin":"1","credit":"100","docType":"user","tradingType":"Buyer","username":"herrytco@gmail.com"}'
-                print("Response: %s" % (data.text))
-                obj = json.loads(data.text)
+
+                try:
+                    obj = json.loads(data.text)
+                except:
+                    return data.text
 
                 print("server credit: ", obj["credit"])
                 user.balance = obj["credit"]
