@@ -190,6 +190,7 @@
               <!-- offers -->
               {% for offer in offersShown %}
 
+              {% if offer.ownOffer or offer.available or offer.filename in buys %}
               <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-{{colorMapping[offer.type]}}
                   shadow
@@ -212,6 +213,13 @@
 
                       </div>
                       <div class="col-auto">
+                        {% if offer.ownOffer %}
+                        {% if offer.available %}
+                        <a href="disable/{{ offer.filename }}"><i class ="fas fa-ban" style="float:right;"></i></a> <br />
+                        {% else %}
+                        <a href="enable/{{ offer.filename }}"><i class ="fas fa-check" style="float:right;"></i></a> <br />
+                        {% endif %}
+                        {% endif %}
                         <i class="fas fa-file-{{iconMapping[offer.type]}}
                           fa-2x
                           text-gray-300"></i>
@@ -220,6 +228,7 @@
                   </div>
                 </div>
               </div>
+              {% endif %}
               {% endfor %}
             </div>
             <!-- End of Main Content -->
