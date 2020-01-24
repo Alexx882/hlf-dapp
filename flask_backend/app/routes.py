@@ -156,8 +156,8 @@ def buy(filename):
                 filename=filename
             )
         except Exception as e:
-            print(e);
-            return "File Could not be purchased."
+            return str(e)
+            # return "File Could not be purchased."
 
     return redirect(url_for('index'))
 
