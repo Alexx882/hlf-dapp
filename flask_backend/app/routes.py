@@ -78,7 +78,7 @@ def signUp():
         email = form.email.data
         password = form.password.data
 
-        userNew = User(None, name, email, password, 0)
+        userNew = User(None, name, email, password, 100)
 
         duplicate = False
         for user in userManager.users:
@@ -112,15 +112,18 @@ def register():
 def download(filename):
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
-    
-    c1 = current_user.id not in offerManager.buys
+
+    c1 = current_user.id in offerManager.buys
     c2 = False
-    
+
     for offer in offerManager.offers:
         if offer.offererId == current_user.id:
             c2 = True
-    
-    if not c1 and not c2: 
+
+    print(c1)
+    print(c2)
+
+    if not c1 and not c2:
         return redirect(url_for('index'))
 
     path = os.path.join(app.instance_path, '_user_files/%s' % (filename))
@@ -142,6 +145,14 @@ def buy(filename):
 
     if offer != None and current_user.balance > price:
         current_user.balance -= price
+
+        for user in userManager.users:
+            if user == offer.offererId:
+                user.balance += price
+
+                if url != "undefined":
+                    requests.patch("%s/users/updateUserCredit" % (url),
+                                   data={"username": user.email, "credit": user.balance})
 
         if current_user.id not in offerManager.buys:
             offerManager.buys[current_user.id] = []
@@ -192,6 +203,7 @@ def offer(filename):
     else:
         return redirect(url_for('index'))
 
+
 @app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
@@ -211,15 +223,17 @@ def login():
 
                     try:
                         obj = json.loads(data.text)
+
+                        print(obj)
+                        print("server credit: ", obj["credit"])
+                        user.balance = int(obj["credit"])
+
+                        login_user(user, remember=True)
+                        userManager.writeToFile()
                     except:
                         return data.text
 
-                    print(obj)
-                    print("server credit: ", obj["credit"])
-                    user.balance = int(obj["credit"])
-
-                    login_user(user, remember=True)
-                    userManager.writeToFile()
+                    
 
                 return redirect(url_for('index'))
 
@@ -306,11 +320,12 @@ def add():
         form=UploadForm()
     )
 
+
 @app.route('/enable/<filename>')
 def enable(filename):
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
-    
+
     for offer in offerManager.offers:
         if offer.filename == filename:
             offer.available = True
@@ -320,11 +335,12 @@ def enable(filename):
                 avString = "1"
 
             if url != "undefined":
-                requests.patch("%s/file/updateFileAvailability" % (url), data = {"filename":filename, "available": avString})
+                requests.patch("%s/file/updateFileAvailability" % (url),
+                               data={"filename": filename, "available": avString})
             break
-    
+
     offerManager.writeToFile()
-    
+
     return redirect(url_for("index"))
 
 
@@ -332,7 +348,7 @@ def enable(filename):
 def disable(filename):
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
-    
+
     for offer in offerManager.offers:
         if offer.filename == filename:
             offer.available = False
@@ -342,11 +358,12 @@ def disable(filename):
                 avString = "1"
 
             if url != "undefined":
-                requests.patch("%s/file/updateFileAvailability" % (url), data = {"filename":filename, "available": avString})
+                requests.patch("%s/file/updateFileAvailability" % (url),
+                               data={"filename": filename, "available": avString})
             break
-    
+
     offerManager.writeToFile()
-    
+
     return redirect(url_for("index"))
 
 
@@ -374,11 +391,11 @@ def search():
             buys = offerManager.buys[current_user.id]
         else:
             buys = []
-        
+
         offersShown = [offer.toDictionary() for offer in offerManager.offers]
         for offer in offersShown:
             offer['ownOffer'] = offer['offererId'] == current_user.id
-        
+
         return render_template(
             'shop.html',
             username='Herry',
@@ -414,7 +431,7 @@ def shop():
     offersShown = [offer.toDictionary() for offer in offerManager.offers]
     for offer in offersShown:
         offer['ownOffer'] = offer['offererId'] == current_user.id
-    
+
     return render_template(
         'shop.html',
         username=current_user.email,
