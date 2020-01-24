@@ -22,7 +22,6 @@ def load_user(id):
 
     return None
 
-
 try:
     url = os.environ['WRAPPER_ENDPOINT']
 except:
@@ -145,7 +144,7 @@ def buy(filename):
             
             # update balance in backend
             requests.patch("%s/users/updateUserCredit",
-                        payload={"username": current_user.email, "credit": current_user.balance})
+                        data={"username": current_user.email, "credit": current_user.balance})
 
             return render_template(
                 "success-download.html",
@@ -191,7 +190,7 @@ def login():
         for user in userManager.users:
             if user.email == username and user.checkPassword(password):
                 data = requests.post("%s/users/getUser" %
-                                     (url), payload={"username": user.email})
+                                     (url), data={"username": user.email})
                 # data = '{"admin":"1","credit":"100","docType":"user","tradingType":"Buyer","username":"herrytco@gmail.com"}'
                 obj = json.loads(data)
 
@@ -266,7 +265,7 @@ def upload():
             bytes = f.read()  # read entire file as bytes
             readable_hash = hashlib.sha256(bytes).hexdigest()
 
-        requests.post("%s/file/registerFile" % (url), payload={"filename": filename, "owner": current_user.email,
+        requests.post("%s/file/registerFile" % (url), data={"filename": filename, "owner": current_user.email,
                                                                "type": "filetype", "price": form.price.data, "available": "1", "hash": readable_hash})
 
         return redirect(url_for('success'))
