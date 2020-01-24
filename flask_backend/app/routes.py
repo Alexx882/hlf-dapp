@@ -26,7 +26,7 @@ def load_user(id):
 try:
     url = os.environ['WRAPPER_ENDPOINT']
 except:
-    url = "undefined"
+    url = "http://test.nope-api.systems:3033/api"
 
 colorMapping = {
     "video": "primary",
@@ -203,8 +203,9 @@ def login():
                     except:
                         return data.text
 
+                    print(obj)
                     print("server credit: ", obj["credit"])
-                    user.balance = obj["credit"]
+                    user.balance = int(obj["credit"])
 
                     login_user(user, remember=True)
                     userManager.writeToFile()
@@ -254,7 +255,7 @@ def upload():
             filetype = "image"
         elif ending == "mp4" or ending == "flv":
             filetype = "video"
-        elif ending == "txt" or ending == "doc":
+        elif ending == "txt" or ending == "doc" or ending == "pdf":
             filetype = "text"
         else:
             filetype = "music"
