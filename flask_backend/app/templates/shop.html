@@ -56,59 +56,6 @@
 
         <!-- Divider -->
         <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-          Buy
-        </div>
-
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse"
-            data-target="#collapseOne" aria-expanded="true"
-            aria-controls="collapseOne">
-            <i class="far fa-file"></i>
-            <span>Files</span>
-          </a>
-          <div id="collapseOne" class="collapse" aria-labelledby="headingTwo"
-            data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header">Available Files:</h6>
-              <a class="collapse-item" href="buttons.html">Music</a>
-              <a class="collapse-item" href="cards.html">Images</a>
-              <a class="collapse-item" href="cards.html">Text</a>
-              <a class="collapse-item" href="cards.html">Video</a>
-            </div>
-          </div>
-        </li>
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-          Sell
-        </div>
-
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse"
-            data-target="#collapseTwo" aria-expanded="true"
-            aria-controls="collapseTwo">
-            <i class="far fa-file"></i>
-            <span>Files</span>
-          </a>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-            data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header">Available Files:</h6>
-              <a class="collapse-item" href="buttons.html">Music</a>
-              <a class="collapse-item" href="cards.html">Images</a>
-              <a class="collapse-item" href="cards.html">Text</a>
-              <a class="collapse-item" href="cards.html">Video</a>
-            </div>
-          </div>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider">
       </ul>
       <!-- End of Sidebar -->
 
@@ -158,7 +105,7 @@
                   aria-expanded="false">
                   <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{username}}<br>{{ balance }} HyperCoinz</span>
                   <img class="img-profile rounded-circle"
-                    src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                    src="https://image.flaticon.com/icons/png/512/17/17004.png">
                 </a>
                 <!-- Dropdown - User Information -->
                 <div class="dropdown-menu dropdown-menu-right shadow
@@ -190,6 +137,7 @@
               <!-- offers -->
               {% for offer in offersShown %}
 
+              {% if offer.ownOffer or offer.available or offer.filename in buys %}
               <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-{{colorMapping[offer.type]}}
                   shadow
@@ -212,6 +160,13 @@
 
                       </div>
                       <div class="col-auto">
+                        {% if offer.ownOffer %}
+                        {% if offer.available %}
+                        <a href="disable/{{ offer.filename }}"><i class ="fas fa-ban" style="float:right;"></i></a> <br />
+                        {% else %}
+                        <a href="enable/{{ offer.filename }}"><i class ="fas fa-check" style="float:right;"></i></a> <br />
+                        {% endif %}
+                        {% endif %}
                         <i class="fas fa-file-{{iconMapping[offer.type]}}
                           fa-2x
                           text-gray-300"></i>
@@ -220,6 +175,7 @@
                   </div>
                 </div>
               </div>
+              {% endif %}
               {% endfor %}
             </div>
             <!-- End of Main Content -->
