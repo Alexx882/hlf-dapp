@@ -98,6 +98,13 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $("#inputGroupFile01").change(function(){
+            alert("a");
+            $(".custom-file-label").text(this.files[0].name);
+        });
+    </script>
   </body>
 
 </html>
