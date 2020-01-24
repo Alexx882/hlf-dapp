@@ -24,7 +24,7 @@
     <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}"
       rel="stylesheet">
 
-  </head>
+  </git >
 
   <body id="page-top">
 
@@ -147,9 +147,18 @@
                       <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary
                           text-uppercase mb-1">
+                          
+                          {% if offer.ownOffer %}
+                          <a href="download/{{ offer.filename }}">
+                            {{offer.filename}}
+                          </a>
+                          {% else %}
                           <a href="offer/{{ offer.filename }}">
                             {{offer.filename}}
                           </a>
+                          {% endif %}
+
+
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">${{offer.price}}</div>
                         <div class="text-xs text-uppercase">sold by <b>{{users[offer.offererId]}}</b></div>

@@ -110,7 +110,17 @@ def register():
 
 @app.route('/download/<filename>')
 def download(filename):
-    if not current_user.is_authenticated or current_user.id not in offerManager.buys:
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    c1 = current_user.id not in offerManager.buys
+    c2 = False
+    
+    for offer in offerManager.offers:
+        if offer.offererId == current_user.id:
+            c2 = True
+    
+    if not c1 and not c2: 
         return redirect(url_for('index'))
 
     path = os.path.join(app.instance_path, '_user_files/%s' % (filename))
