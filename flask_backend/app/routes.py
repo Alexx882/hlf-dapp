@@ -192,7 +192,8 @@ def login():
                 data = requests.post("%s/users/getUser" %
                                      (url), data={"username": user.email})
                 # data = '{"admin":"1","credit":"100","docType":"user","tradingType":"Buyer","username":"herrytco@gmail.com"}'
-                obj = json.loads(data)
+                print("Response: %s" % (data.text))
+                obj = json.loads(data.text)
 
                 print("server credit: ", obj["credit"])
                 user.balance = obj["credit"]
