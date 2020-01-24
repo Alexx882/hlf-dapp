@@ -213,7 +213,7 @@ def login():
 
                 return redirect(url_for('index'))
 
-        return "success %s/%s" % (username, password)
+        return '<p>Invalid Credentials: %s / %s</p> </ br> <button onclick="window.history.back();">Go Back</button>' % (username, password)
     else:
         return redirect(url_for('index'))
 
