@@ -148,7 +148,7 @@ def buy(filename):
             # update balance in backend
 
             if url != "undefined":
-                requests.patch("%s/users/updateUserCredit",
+                requests.patch("%s/users/updateUserCredit" % (url),
                                data={"username": current_user.email, "credit": current_user.balance})
 
             return render_template(
