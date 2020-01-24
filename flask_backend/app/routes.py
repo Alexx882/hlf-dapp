@@ -22,6 +22,7 @@ def load_user(id):
 
     return None
 
+
 try:
     url = os.environ['WRAPPER_ENDPOINT']
 except:
@@ -89,7 +90,8 @@ def signUp():
             userManager.writeToFile()
 
             # register user at back-backend
-            requests.post("%s/users/registerUser" % (url), data = {"username":userNew.email, "credit":"1000", "tradingType":"Buyer", "admin":"0"})
+            requests.post("%s/users/registerUser" % (url), data={
+                          "username": userNew.email, "credit": "1000", "tradingType": "Buyer", "admin": "0"})
 
     return redirect(url_for('index'))
 
@@ -136,19 +138,18 @@ def buy(filename):
         offerManager.writeToFile()
 
         # update balance in backend
-        requests.patch("%s/users/updateUserCredit",
-        #               payload={"username": current_user.email, "credit": current_user.balance})
+        requests.patch("%s/users/updateUserCredit", payload={"username": current_user.email, "credit": current_user.balance})
 
         # tell the server that the file was bought
-        requests.post("%s/file/buyFile" % (url), data = {"filename":filename, "buyername":current_user.email})
-        
+        requests.post("%s/file/buyFile" % (url), 
+        data={"filename": filename, "buyername": current_user.email})
+
         return render_template(
             "success-download.html",
             filename=filename
         )
 
     return redirect(url_for('index'))
-
 
 @app.route('/offer/<filename>')
 def offer(filename):
