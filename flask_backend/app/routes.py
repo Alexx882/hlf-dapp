@@ -22,6 +22,7 @@ def load_user(id):
 
     return None
 
+
 try:
     url = os.environ['WRAPPER_ENDPOINT']
 except:
@@ -89,8 +90,9 @@ def signUp():
             userManager.writeToFile()
 
             # register user at back-backend
-            requests.post("%s/users/registerUser" % (url), data={
-                          "username": userNew.email, "credit": "1000", "tradingType": "Buyer", "admin": "0"})
+            if url != "undefined":
+                requests.post("%s/users/registerUser" % (url), data={
+                    "username": userNew.email, "credit": "1000", "tradingType": "Buyer", "admin": "0"})
 
     return redirect(url_for('index'))
 
@@ -139,12 +141,15 @@ def buy(filename):
 
         try:
             # tell the server that the file was bought
-            requests.post("%s/file/buyFile" % (url),
-                        data={"filename": filename, "buyername": current_user.email})
-            
+            if url != "undefined":
+                requests.post("%s/file/buyFile" % (url),
+                              data={"filename": filename, "buyername": current_user.email})
+
             # update balance in backend
-            requests.patch("%s/users/updateUserCredit",
-                        data={"username": current_user.email, "credit": current_user.balance})
+
+            if url != "undefined":
+                requests.patch("%s/users/updateUserCredit",
+                               data={"username": current_user.email, "credit": current_user.balance})
 
             return render_template(
                 "success-download.html",
@@ -152,7 +157,7 @@ def buy(filename):
             )
         except:
             return "File Could not be purchased."
-            
+
     return redirect(url_for('index'))
 
 
@@ -176,7 +181,6 @@ def offer(filename):
     else:
         return redirect(url_for('index'))
 
-
 @app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
@@ -189,20 +193,22 @@ def login():
 
         for user in userManager.users:
             if user.email == username and user.checkPassword(password):
-                data = requests.get("%s/users/getUser" %
-                                     (url), data={"username": user.email})
 
-                try:
-                    obj = json.loads(data.text)
-                except:
-                    return data.text
+                if url != "undefined":
+                    data = requests.get("%s/users/getUser" %
+                                        (url), data={"username": user.email})
 
-                print(obj)
-                print("server credit: ", obj["credit"])
-                user.balance = int(obj["credit"])
+                    try:
+                        obj = json.loads(data.text)
+                    except:
+                        return data.text
 
-                login_user(user, remember=True)
-                userManager.writeToFile()
+                    print(obj)
+                    print("server credit: ", obj["credit"])
+                    user.balance = int(obj["credit"])
+
+                    login_user(user, remember=True)
+                    userManager.writeToFile()
 
                 return redirect(url_for('index'))
 
@@ -249,7 +255,7 @@ def upload():
             filetype = "image"
         elif ending == "mp4" or ending == "flv":
             filetype = "video"
-        elif ending == "txt" or ending == "doc":
+        elif ending == "txt" or ending == "doc" or ending == "pdf":
             filetype = "text"
         else:
             filetype = "music"
@@ -258,7 +264,8 @@ def upload():
             form.price.data,
             filename,
             filetype,
-            current_user.id
+            current_user.id,
+            True
         )
 
         offerManager.offers.append(offer)
@@ -269,8 +276,9 @@ def upload():
             bytes = f.read()  # read entire file as bytes
             readable_hash = hashlib.sha256(bytes).hexdigest()
 
-        requests.post("%s/file/registerFile" % (url), data={"filename": filename, "owner": current_user.email,
-                                                               "type": "filetype", "price": form.price.data, "available": "1", "hash": readable_hash})
+        if url != "undefined":
+            requests.post("%s/file/registerFile" % (url), data={"filename": filename, "owner": current_user.email,
+                                                                "type": "filetype", "price": form.price.data, "available": "1", "hash": readable_hash})
 
         return redirect(url_for('success'))
     else:
@@ -286,6 +294,49 @@ def add():
         'add.html',
         form=UploadForm()
     )
+
+@app.route('/enable/<filename>')
+def enable(filename):
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    for offer in offerManager.offers:
+        if offer.filename == filename:
+            offer.available = True
+
+            avString = "0"
+            if offer.available:
+                avString = "1"
+
+            if url != "undefined":
+                requests.patch("%s/file/updateFileAvailability" % (url), data = {"filename":filename, "available": avString})
+            break
+    
+    offerManager.writeToFile()
+    
+    return redirect(url_for("index"))
+
+
+@app.route('/disable/<filename>')
+def disable(filename):
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    for offer in offerManager.offers:
+        if offer.filename == filename:
+            offer.available = False
+
+            avString = "0"
+            if offer.available:
+                avString = "1"
+
+            if url != "undefined":
+                requests.patch("%s/file/updateFileAvailability" % (url), data = {"filename":filename, "available": avString})
+            break
+    
+    offerManager.writeToFile()
+    
+    return redirect(url_for("index"))
 
 
 @app.route('/search', methods=['POST'])
@@ -312,7 +363,11 @@ def search():
             buys = offerManager.buys[current_user.id]
         else:
             buys = []
-
+        
+        offersShown = [offer.toDictionary() for offer in offerManager.offers]
+        for offer in offersShown:
+            offer['ownOffer'] = offer['offererId'] == current_user.id
+        
         return render_template(
             'shop.html',
             username='Herry',
@@ -345,11 +400,15 @@ def shop():
 
     userManager.writeToFile()
 
+    offersShown = [offer.toDictionary() for offer in offerManager.offers]
+    for offer in offersShown:
+        offer['ownOffer'] = offer['offererId'] == current_user.id
+    
     return render_template(
         'shop.html',
         username=current_user.email,
         balance=current_user.balance,
-        offersShown=[offer.toDictionary() for offer in offerManager.offers],
+        offersShown=offersShown,
         colorMapping=colorMapping,
         iconMapping=iconMapping,
         users=usersMap,

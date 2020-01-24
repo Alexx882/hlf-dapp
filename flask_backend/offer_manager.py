@@ -25,12 +25,13 @@ class OfferManager:
 
         offers = json.loads(data)
         for offerObj in offers["offers"]:
-            if 'price' in offerObj.keys() and 'filename' in offerObj.keys() and 'type' in offerObj.keys() and 'offererId' in offerObj.keys():
+            if 'price' in offerObj.keys() and 'filename' in offerObj.keys() and 'type' in offerObj.keys() and 'offererId' in offerObj.keys() and 'available' in offerObj.keys():
                 offer = Offer(
                     offerObj['price'],
                     offerObj['filename'],
                     offerObj['type'],
-                    offerObj['offererId']
+                    offerObj['offererId'],
+                    offerObj['available']
                 )
 
                 self.offers.append(offer)
