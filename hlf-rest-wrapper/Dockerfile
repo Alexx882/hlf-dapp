@@ -1,5 +1,8 @@
 FROM node:10
 
+ENV http_proxy http://proxy.uni-klu.ac.at:3128/ 
+ENV https_proxy http://proxy.uni-klu.ac.at:3128/
+
 # Create app directory
 WORKDIR /usr/src/app
 
